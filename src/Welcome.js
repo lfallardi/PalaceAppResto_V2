@@ -47,6 +47,9 @@ const WelcomeScreen=({ navigation }) => {
   const reservarResto = () => {
     const db = firebase.firestore();
 
+    console.log(NameResto);
+    console.log(IdResto);
+
     db.collection('Reservas').add({
       Resto: NameResto,
       ID: IdResto,
@@ -78,10 +81,10 @@ const WelcomeScreen=({ navigation }) => {
                   onKeyPress={BuscarResto}/> */}
 
         <Carousel
-              // ref={(c) => { carousel = c; }}
+              ref={(c) => { carousel = c; }}
               data={Object.keys(Restos)}
-              renderItem={( {item:key} ) => {return <View style={styles.Card} title={Restos[key].id}>
-                                                      <Image source={{uri:Restos[key].img? Restos[key].img: ''}} style={styles.stretch}/>    
+              renderItem={( {item:key} ) => {return <View style={styles.Card} title={Restos[key].ID}>
+                                                      <Image source={{uri:Restos[key].img !== undefined? Restos[key].img: ''}} style={styles.stretch}/>    
                                                       <Text style={styles.Title}> {Restos[key].subtitle} </Text>
                                                       <View style={styles.contenedorAcciones}>
                                                         <TouchableOpacity
@@ -98,10 +101,8 @@ const WelcomeScreen=({ navigation }) => {
                                                         <TouchableOpacity
                                                           style={[styles.btnReserve]}
                                                           onPress={() => {
-                                                            console.log(Restos[key], 'objeto');
-                                                            console.log(Restos[key].img, 'la imagen');
-                                                            console.log(Restos[key].Name, 'nombre');
-                                                            console.log(Restos[key].ID, 'el id');
+                                                            setNameResto(Restos[key].Name);
+                                                            console.log(NameResto);
                                                           }}
                                                         >
                                                           <Text style={color='#FFF'}>Calificar</Text>
@@ -179,6 +180,7 @@ const styles = StyleSheet.create({
   },
   
   stretch: {
+    hight: 500,
     width: 300,
     resizeMode: 'contain',
   },
