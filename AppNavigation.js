@@ -4,6 +4,7 @@ import Login from './src/Login';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import WelcomeScreen from './src/Welcome';
+import { Icon } from 'react-native-elements';
 
 class HomeScreen extends React.Component {
   render() {
@@ -22,6 +23,12 @@ const AppNavigator = createStackNavigator({
   },
   Welcome: {
     screen: WelcomeScreen,
+    navigationOptions: {
+      headerTintColor: '#FFF',
+      headerStyle: {
+        backgroundColor: '#000',
+      }      
+    }
     // navigationOptions: {header: null},
   },
 }, {initialRouteName: 'Home'});

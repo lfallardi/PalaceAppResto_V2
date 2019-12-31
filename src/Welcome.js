@@ -47,9 +47,6 @@ const WelcomeScreen=({ navigation }) => {
   const reservarResto = () => {
     const db = firebase.firestore();
 
-    console.log(NameResto);
-    console.log(IdResto);
-
     db.collection('Reservas').add({
       Resto: NameResto,
       ID: IdResto,
@@ -66,45 +63,39 @@ const WelcomeScreen=({ navigation }) => {
     );
   };
 
-
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Carousel
-              ref={(c) => { carousel = c; }}
+              // ref={(c) => { carousel = c; }}
               data={Object.keys(Restos)}
-              renderItem={( {item:key} ) => {return <View style={styles.Card} title={Restos[key].ID}>
-                                                      <Image source={{uri:Restos[key].img? Restos[key].img: ''}} style={styles.stretch}/>    
-                                                      <Text style={styles.Title}> {Restos[key].subtitle} </Text>
-                                                      <View style={styles.contenedorAcciones}>
-                                                        <TouchableOpacity
-                                                          style={[styles.btnReserve]}
-                                                          onPress={() => {
-                                                            setNameResto(Restos[key].Name);
-                                                            setIdResto(Restos[key].ID);
-                                                            reservarResto();
-                                                          }}
-                                                          >
-                                                          <Text style={styles.textButton}>Reservar</Text>
-                                                        </TouchableOpacity>
+              renderItem={( {item:key} ) => <View style={styles.Card} title={Restos[key].ID}>
+                                              <Image source={{uri:'https://files-palace-moon-thegrand.s3.amazonaws.com/s3fs-public/2019-11/cielito-lindo-tg-1920x650-_0.jpg'}} style={styles.stretch} />
+                                              <Text style={styles.Title}>{Restos[key].subtitle}</Text>
+                                              <Text style={styles.Time}>{Restos[key].WaitTime}</Text>
+                                              <Text style={styles.data}>{Restos[key].data}</Text>
+                                              <View style={styles.contenedorAcciones}>
+                                                <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                                                  setNameResto(Restos[key].Name);
+                                                  setIdResto(Restos[key].ID);
+                                                  reservarResto();
+                                                } }>
+                                                  <Text style={styles.textButton}>Reservar</Text>
+                                                </TouchableOpacity>
 
-                                                        <TouchableOpacity
-                                                          style={[styles.btnReserve]}
-                                                          onPress={() => {
-                                                            setNameResto(Restos[key].Name);
-                                                            console.log(NameResto);
-                                                          }}
-                                                        >
-                                                          <Text style={styles.textButton}>Calificar</Text>
-                                                        </TouchableOpacity>
-                                                      </View>
-                                                    </View>}
-              }
+                                                <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                                                  setNameResto(Restos[key].Name);
+                                                  console.log(NameResto);
+                                                } }>
+                                                  <Text style={styles.textButton}>Calificar</Text>
+                                                </TouchableOpacity>
+                                              </View>
+                                          </View>
+                            }
               sliderWidth={Dimensions.get('window').width}
               itemWidth={300}
-        />
-      </View>
+          />
+        </View>
     </TouchableWithoutFeedback>
   )
 }
@@ -121,8 +112,7 @@ const styles = StyleSheet.create({
   },
   
   stretch: {
-    hight: 500,
-    width: 300,
+    width: 400,
     resizeMode: 'contain',
   },
 
@@ -152,27 +142,32 @@ const styles = StyleSheet.create({
   },
 
   Time: {
-    alignItems: 'center',
-    fontSize: 16,
-    width: 100
+    fontSize: 14,
+    width: 100,
+    color: '#FFF'
+  },
+
+  data: {
+    fontSize: 12,
+    color: '#FFF',
   },
   
   Card: {
-    marginTop: 10,
+    marginTop: 5,
     height: 500,
+    width: 400,
     borderRadius: 25,
     marginLeft: 10,
     marginRight: 10,
     backgroundColor: '#161616',
     padding: 10,
-    shadowColor: '#A9733E',
+    shadowColor: '#FFF',
     shadowOffset: {
       width: 0,
       height: 3,
     },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-    
+    shadowOpacity: 0.2,
+    shadowRadius: 4.7,
     elevation: 7,
   }
   
