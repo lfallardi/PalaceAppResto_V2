@@ -1,5 +1,6 @@
 import React, { Component, useState, useEffect } from 'react'
 import { Modal, StyleSheet, Text, Image, TextInput, View, Keyboard, TouchableOpacity, FlatList, TouchableWithoutFeedback, Alert, Dimensions } from 'react-native'
+import { Card } from 'react-native-elements';
 import * as firebase from "firebase";
 import Carousel from 'react-native-snap-carousel';
 
@@ -69,6 +70,34 @@ const WelcomeScreen=({ navigation }) => {
         <Carousel
               // ref={(c) => { carousel = c; }}
               data={Object.keys(Restos)}
+              renderItem={( {item:key} ) => <Card key={Restos[key].ID} style={styles.Card} image={Restos[key].img}>
+                                                <Text style={styles.Title}>{Restos[key].subtitle}</Text>
+                                                <Text style={styles.Time}>{Restos[key].WaitTime}</Text>
+                                                <Text style={styles.data}>{Restos[key].data}</Text>
+                                                <View style={styles.contenedorAcciones}>
+                                                  <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                                                    setNameResto(Restos[key].Name);
+                                                    setIdResto(Restos[key].ID);
+                                                    reservarResto();
+                                                  } }>
+                                                    <Text style={styles.textButton}>Reservar</Text>
+                                                  </TouchableOpacity>
+
+                                                  <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                                                    setNameResto(Restos[key].Name);
+                                                    console.log(NameResto);
+                                                  } }>
+                                                    <Text style={styles.textButton}>Calificar</Text>
+                                                  </TouchableOpacity>
+                                                </View>
+                                          </Card>
+                            }
+              sliderWidth={Dimensions.get('window').width}
+              itemWidth={300}
+          />
+        {/* <Carousel
+              // ref={(c) => { carousel = c; }}
+              data={Object.keys(Restos)}
               renderItem={( {item:key} ) => <View style={styles.Card} title={Restos[key].ID}>
                                               <Image source={{uri:'https://files-palace-moon-thegrand.s3.amazonaws.com/s3fs-public/2019-11/cielito-lindo-tg-1920x650-_0.jpg'}} style={styles.stretch} />
                                               <Text style={styles.Title}>{Restos[key].subtitle}</Text>
@@ -94,7 +123,7 @@ const WelcomeScreen=({ navigation }) => {
                             }
               sliderWidth={Dimensions.get('window').width}
               itemWidth={300}
-          />
+          /> */}
         </View>
     </TouchableWithoutFeedback>
   )
@@ -155,7 +184,6 @@ const styles = StyleSheet.create({
   Card: {
     marginTop: 5,
     height: 500,
-    width: 400,
     borderRadius: 25,
     marginLeft: 10,
     marginRight: 10,
