@@ -36,9 +36,9 @@ const Login=(props) => {
 
   const [ LoginInput, btnLogin ] = props.styles
 
-  const [Room, setRoom] = useState("");
-  const [Name, setName] = useState("");
-  const [LastName, setLastName] = useState("");
+  const [Room, setRoom] = useState("90100");
+  const [Name, setName] = useState("Leonardo");
+  const [LastName, setLastName] = useState("Fallardi");
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -70,7 +70,7 @@ const WelcomeScreen=({ navigation }) => {
         <Carousel
               // ref={(c) => { carousel = c; }}
               data={Object.keys(Restos)}
-              renderItem={( {item:key} ) => <Card key={Restos[key].ID} style={styles.Card} image={Restos[key].img}>
+              renderItem={( {item:key} ) => <Card key={Restos[key].ID} style={styles.Card} image={{uri:Restos[key].img}}>
                                                 <Text style={styles.Title}>{Restos[key].subtitle}</Text>
                                                 <Text style={styles.Time}>{Restos[key].WaitTime}</Text>
                                                 <Text style={styles.data}>{Restos[key].data}</Text>
@@ -94,37 +94,8 @@ const WelcomeScreen=({ navigation }) => {
                             }
               sliderWidth={Dimensions.get('window').width}
               itemWidth={300}
-          />
-        {/* <Carousel
-              // ref={(c) => { carousel = c; }}
-              data={Object.keys(Restos)}
-              renderItem={( {item:key} ) => <View style={styles.Card} title={Restos[key].ID}>
-                                              <Image source={{uri:'https://files-palace-moon-thegrand.s3.amazonaws.com/s3fs-public/2019-11/cielito-lindo-tg-1920x650-_0.jpg'}} style={styles.stretch} />
-                                              <Text style={styles.Title}>{Restos[key].subtitle}</Text>
-                                              <Text style={styles.Time}>{Restos[key].WaitTime}</Text>
-                                              <Text style={styles.data}>{Restos[key].data}</Text>
-                                              <View style={styles.contenedorAcciones}>
-                                                <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
-                                                  setNameResto(Restos[key].Name);
-                                                  setIdResto(Restos[key].ID);
-                                                  reservarResto();
-                                                } }>
-                                                  <Text style={styles.textButton}>Reservar</Text>
-                                                </TouchableOpacity>
-
-                                                <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
-                                                  setNameResto(Restos[key].Name);
-                                                  console.log(NameResto);
-                                                } }>
-                                                  <Text style={styles.textButton}>Calificar</Text>
-                                                </TouchableOpacity>
-                                              </View>
-                                          </View>
-                            }
-              sliderWidth={Dimensions.get('window').width}
-              itemWidth={300}
-          /> */}
-        </View>
+        />
+      </View>
     </TouchableWithoutFeedback>
   )
 }
