@@ -1,16 +1,16 @@
 import React, { Component, useState, useEffect } from 'react'
-import { Modal, StyleSheet, Text, Image, TextInput, View, Keyboard, TouchableOpacity, FlatList, TouchableWithoutFeedback, Alert, Dimensions } from 'react-native'
-import { Card } from 'react-native-elements';
+import { Modal, StyleSheet, Text, View, Keyboard, 
+         TouchableOpacity, ImageBackground, Dimensions, ScrollView} from 'react-native'
+import { Card, Icon } from 'react-native-elements';
 import * as firebase from "firebase";
 import Carousel from 'react-native-snap-carousel';
 
 const WelcomeScreen=({ navigation }) => {
   const [NameResto, setNameResto] = useState("");
   const [IdResto, setIdResto] = useState("");
-  const [Search, setSearch] = useState("");
-  const [ModalSte, setModalSte] = useState(false);
   const [Restos, setResto] = useState({});
   
+  // firebase
   useEffect(() => {
     const db = firebase.firestore();
 
@@ -39,12 +39,7 @@ const WelcomeScreen=({ navigation }) => {
     };
   }, []);
 
-  const BuscarResto = () => {
-    if (Object.keys(Restos).filter(key => Restos[key].Name.includes(Search)).length == 0) {
-       Alert.alert('The Grand at Moon Palace', 'Not found')
-    }
-  }
-
+  // reservas
   const reservarResto = () => {
     const db = firebase.firestore();
 
@@ -54,69 +49,56 @@ const WelcomeScreen=({ navigation }) => {
       Date: firebase.firestore.FieldValue.serverTimestamp()
     });
   };
-  
-  const renderItem = (Name) => {
-    console.log(Name, 'entre');
-    return (
-      <View style={styles.Card}>
-          <Text style={styles.title}>{ Name }</Text>
-      </View>
-    );
-  };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Carousel
-              // ref={(c) => { carousel = c; }}
-              data={Object.keys(Restos)}
-              renderItem={( {item:key} ) => <Card key={Restos[key].ID} style={styles.Card} image={{uri:Restos[key].img}}>
-                                                <Text style={styles.Title}>{Restos[key].subtitle}</Text>
-                                                <Text style={styles.Time}>{Restos[key].WaitTime}</Text>
-                                                <Text style={styles.data}>{Restos[key].data}</Text>
-                                                <View style={styles.contenedorAcciones}>
-                                                  <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
-                                                    setNameResto(Restos[key].Name);
-                                                    setIdResto(Restos[key].ID);
-                                                    reservarResto();
-                                                  } }>
-                                                    <Text style={styles.textButton}>Reservar</Text>
-                                                  </TouchableOpacity>
+    <View style={styles.container}>
+      <Carousel
+        data={Object.keys(Restos)}
+        renderItem={( {item:key} ) => <ImageBackground key={Restos[key].ID} style={styles.imgBackGroundCard} source={{uri:Restos[key].backGround? Restos[key].backGround: ''}}>
+                                        <Card containerStyle={styles.card} image={{uri:Restos[key].img}} >
+                                          <Text style={styles.title}>{Restos[key].subtitle}</Text>
+                                          <Text style={styles.time}>{Restos[key].WaitTime}</Text>
+                                          <View style={styles.divider}></View>
+                                          <ScrollView style={styles.scroll}>
+                                            <Text style={styles.data}>{Restos[key].data}</Text>
+                                          </ScrollView>
+                                          <View style={styles.contenedorAcciones}>
+                                            <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                                              setNameResto(Restos[key].Name);
+                                              setIdResto(Restos[key].ID);
+                                              reservarResto();
+                                            } }>
+                                              <Text style={styles.textButton}>Reservar</Text>
+                                            </TouchableOpacity>
 
-                                                  <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
-                                                    setNameResto(Restos[key].Name);
-                                                    console.log(NameResto);
-                                                  } }>
-                                                    <Text style={styles.textButton}>Calificar</Text>
-                                                  </TouchableOpacity>
-                                                </View>
-                                          </Card>
-                            }
-              sliderWidth={Dimensions.get('window').width}
-              itemWidth={300}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+                                            <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                                              setNameResto(Restos[key].Name);
+                                              setIdResto(Restos[key].ID);
+                                              console.log(NameResto, IdResto);
+                                            } }>
+                                              <Text style={styles.textButton}>Calificar</Text>
+                                            </TouchableOpacity>
+                                          </View>
+                                      </Card>
+                                    </ImageBackground>
+                      }
+        keyExtractor={item => item.ID}
+        sliderWidth={Dimensions.get('window').width}
+        itemWidth={Dimensions.get('window').width}
+      />
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: 400,
+    // marginTop: 10,
+    padding: 0,
     backgroundColor: '#000',
-    justifyContent: 'flex-start',
-    paddingTop: 30,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  
-  stretch: {
-    width: 400,
-    resizeMode: 'contain',
   },
 
-  Title: {
+  title: {
     fontSize: 16,
     color: '#A9733E',
   },
@@ -127,13 +109,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#A9733E',
     padding: 10,
     alignItems: 'center',
+    margin: 5,
   },
 
-  textButton: {
-    color: '#FFF',
-    fontSize: 14,
-  },
-  
   contenedorAcciones: {
     flexDirection: 'row',
     flex: 1,
@@ -141,26 +119,34 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
-  Time: {
+  time: {
     fontSize: 14,
     width: 100,
     color: '#FFF'
+  },
+
+  divider: {
+    height: 1,
+    width: 150,
+    boderColor: '#A9733E'
+  },
+
+  scroll: {
+    height: 150
   },
 
   data: {
     fontSize: 12,
     color: '#FFF',
   },
-  
-  Card: {
-    marginTop: 5,
-    height: 500,
-    borderRadius: 25,
-    marginLeft: 10,
-    marginRight: 10,
+
+  card: {
+    zIndex: 999999999,
     backgroundColor: '#161616',
+    borderBottomEndRadius: 25,
+    borderBottomStartRadius: 25,
     padding: 10,
-    shadowColor: '#FFF',
+    shadowColor: '#A9733E',
     shadowOffset: {
       width: 0,
       height: 3,
@@ -168,8 +154,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4.7,
     elevation: 7,
-  }
+    padding: 0,
+    opacity: 1,
+    borderColor: 'transparent',
+    marginBottom: 10
+  },
   
+  imgBackGroundCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    opacity: 0.5
+  }  
+
 })
 
 export default WelcomeScreen;

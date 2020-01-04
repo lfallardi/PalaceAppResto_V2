@@ -23,13 +23,13 @@ const AppNavigator = createStackNavigator({
   },
   Welcome: {
     screen: WelcomeScreen,
-    navigationOptions: {
-      headerTintColor: '#FFF',
-      headerStyle: {
-        backgroundColor: '#000',
-      }      
-    }
-    // navigationOptions: {header: null},
+    navigationOptions: { header: null }
+    // navigationOptions: {
+    //   headerTintColor: '#FFF',
+    //   headerStyle: {
+    //     backgroundColor: 'transparent',
+    //   }      
+    // }
   },
 }, {initialRouteName: 'Home'});
 
