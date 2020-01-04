@@ -1,12 +1,14 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, Children } from 'react'
 import { Modal, StyleSheet, Text, View, Keyboard, 
          TouchableOpacity, ImageBackground, Dimensions, ScrollView} from 'react-native'
 import { Card, Icon } from 'react-native-elements';
 import * as firebase from "firebase";
 import Carousel from 'react-native-snap-carousel';
+import blurImg from '../assets/blur.jpg'
 
 const WelcomeScreen=({ navigation }) => {
   const [NameResto, setNameResto] = useState("");
+  const [CurrentItem, setCurrentItem] = useState(0);
   const [IdResto, setIdResto] = useState("");
   const [Restos, setResto] = useState({});
   
@@ -40,12 +42,23 @@ const WelcomeScreen=({ navigation }) => {
   }, []);
 
   // reservas
-  const reservarResto = () => {
+  const reservarResto = (Resto) => {
     const db = firebase.firestore();
 
     db.collection('Reservas').add({
-      Resto: NameResto,
-      ID: IdResto,
+      Resto: Resto.Name,
+      ID: Resto.ID,
+      Date: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  };
+  
+  const calificarResto = (Resto) => {
+    const db = firebase.firestore();
+
+    db.collection('Calificaciones').add({
+      Resto: Resto.Name,
+      ID: Resto.ID,
+      Calidad: 5,
       Date: firebase.firestore.FieldValue.serverTimestamp()
     });
   };
@@ -54,40 +67,48 @@ const WelcomeScreen=({ navigation }) => {
     <View style={styles.container}>
       <Carousel
         data={Object.keys(Restos)}
-        renderItem={( {item:key} ) => <ImageBackground key={Restos[key].ID} style={styles.imgBackGroundCard} source={{uri:Restos[key].backGround? Restos[key].backGround: ''}}>
-                                        <Card containerStyle={styles.card} image={{uri:Restos[key].img}} >
-                                          <Text style={styles.title}>{Restos[key].subtitle}</Text>
-                                          <Text style={styles.time}>{Restos[key].WaitTime}</Text>
-                                          <View style={styles.divider}></View>
-                                          <ScrollView style={styles.scroll}>
-                                            <Text style={styles.data}>{Restos[key].data}</Text>
-                                          </ScrollView>
-                                          <View style={styles.contenedorAcciones}>
-                                            <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
-                                              setNameResto(Restos[key].Name);
-                                              setIdResto(Restos[key].ID);
-                                              reservarResto();
-                                            } }>
-                                              <Text style={styles.textButton}>Reservar</Text>
-                                            </TouchableOpacity>
-
-                                            <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
-                                              setNameResto(Restos[key].Name);
-                                              setIdResto(Restos[key].ID);
-                                              console.log(NameResto, IdResto);
-                                            } }>
-                                              <Text style={styles.textButton}>Calificar</Text>
-                                            </TouchableOpacity>
-                                          </View>
-                                      </Card>
-                                    </ImageBackground>
+        renderItem={( {item:key, index} ) => <CarrouselItem Resto={Restos[key]} CurrentItem={CurrentItem} Index={index} key={Restos[key].ID} 
+                                                            uri={Restos[key].backGround} onReservar={Resto => reservarResto(Resto)}
+                                                            onCalificar={Resto => calificarResto(Resto)}/>
                       }
         keyExtractor={item => item.ID}
         sliderWidth={Dimensions.get('window').width}
         itemWidth={Dimensions.get('window').width}
+        onSnapToItem = {(index) => {
+          setCurrentItem(index)
+        }}
       />
     </View>
   )
+}
+
+
+const CarrouselItem = ({Resto, uri, CurrentItem, Index, onReservar, onCalificar}) => {
+  return <ImageBackground style={styles.imgBackGroundCard} defaultSource={blurImg} source={CurrentItem === Index && uri? {uri}: blurImg}><View style={styles.overlay}>
+          <Card containerStyle={styles.card} image={{uri:Resto.img}} >
+            <Text style={styles.title}>{Resto.subtitle}</Text>
+            <Text style={styles.time}>{Resto.WaitTime}</Text>
+            <View style={styles.divider}/>
+            <ScrollView style={styles.scroll}>
+              <Text style={styles.data}>{Resto.data}</Text>
+            </ScrollView>
+            
+            <View style={styles.contenedorAcciones}>
+              <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                if (onReservar) { onReservar(Resto) } 
+                } }>
+                <Text style={styles.textButton}>Reservar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={[styles.btnReserve]} onPress={() => {
+                if (onCalificar) { onCalificar(Resto) } 
+                } }>
+                <Text style={styles.textButton}>Calificar</Text>
+              </TouchableOpacity>
+            </View>
+          </Card>
+        </View>
+      </ImageBackground>
 }
 
 const styles = StyleSheet.create({
@@ -128,11 +149,17 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     width: 150,
-    boderColor: '#A9733E'
+    borderBottomColor: '#A9733E'
   },
 
   scroll: {
-    height: 150
+    height: 150,
+    marginTop: 5,
+    paddingTop: 5,
+    borderTopColor: '#A9733E',
+    lineHeight: 14,
+    borderTopWidth: 2,
+    marginBottom: 60
   },
 
   data: {
@@ -155,16 +182,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4.7,
     elevation: 7,
     padding: 0,
-    opacity: 1,
+    // opacity: 1,
     borderColor: 'transparent',
     marginBottom: 10
   },
   
-  imgBackGroundCard: {
+  overlay: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    opacity: 0.5
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+
+  imgBackGroundCard: {
+    flex: 1,
+    // opacity: 0.5
   }  
 
 })
